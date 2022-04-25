@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "98f37d45-bc3e-42ef-a906-e5a6208568d5",
+		"name": "AI_01",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Criar Nova Consulta",
+			"item": [
+				{
+					"name": "Limpar BD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "HTTP://localhost:5678/cliente",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"cliente"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Certifique que BD está vazio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"BD está vazio\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"\r",
+									"  var clientes = pm.response.json()\r",
+									"  pm.expect(clientes.length).to.eql(0, 'Array deve estar vazio')\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "HTTP://localhost:5678/cliente",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"cliente"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Realiza primeira consulta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Consulta realizada com sucesso\", () => {\r",
+									"  pm.response.to.have.status(201);\r",
+									"\r",
+									"  var cliente = pm.response.json()\r",
+									"  pm.expect(cliente.montante).to.eql(106.9, 'Montante calculado')\r",
+									"  pm.expect(cliente.juros).to.eql(0.025, 'Juros aplicado')\r",
+									"  pm.expect(cliente.parcelas).to.eql(3, 'Número de parcelas correto')\r",
+									"  pm.expect(cliente.primeiraPrestacao).to.eql(35.64)\r",
+									"  pm.expect(cliente.prestacoes.length).to.eql(cliente.parcelas, 'Número correto de prestacoes')\r",
+									"\r",
+									"  let somaPrestacoes = 0\r",
+									"  for (i=0; i < cliente.prestacoes.length; i++) {\r",
+									"      somaPrestacoes += cliente.prestacoes[i]\r",
+									"  }\r",
+									"  pm.expect(somaPrestacoes).to.eql(cliente.montante, 'Montante é a soma das prestações')\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"Prof. Lucas Silva\",\r\n  \"CPF\": \"111.111.111-11\",\r\n  \"valor\": 101.75,\r\n  \"parcelas\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "HTTP://localhost:5678/consulta-credito",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"consulta-credito"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Realiza segunda consulta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Última consula realizada há 0 dias\", () => {\r",
+									"  pm.response.to.have.status(405);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nome\": \"Prof. Lucas Silva\",\r\n  \"CPF\": \"111.111.111-11\",\r\n  \"valor\": 101.75,\r\n  \"parcelas\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "HTTP://localhost:5678/consulta-credito",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"consulta-credito"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Certifique que BD não está vazio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"BD está vazio\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"\r",
+									"  var clientes = pm.response.json()\r",
+									"  pm.expect(clientes.length).to.greaterThan(0, 'Array não deve estar vazio')\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "HTTP://localhost:5678/cliente",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"cliente"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payload inválido",
+			"item": [
+				{
+					"name": "Payload inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Payload inválido\", () => {\r",
+									"  pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "HTTP://localhost:5678/consulta-credito",
+							"protocol": "HTTP",
+							"host": [
+								"localhost"
+							],
+							"port": "5678",
+							"path": [
+								"consulta-credito"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
